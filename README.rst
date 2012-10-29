@@ -5,8 +5,11 @@ gitxp
 gitxp is a set of git commands to show/add/delete content blocks of files by using the xpath representation
 
 
-Example
-=======
+Examples
+========
+
+git addxp
+---------
 
 test $ git show HEAD:test.py
 class Foo:
@@ -73,5 +76,66 @@ index d3d67fb..1b845d7 100644
 
 +    def bar3(self):
 +        return "bar3"
+test $
+
+
+git rmxp
+--------
+
+test $ cat test.py
+class Foo:
+    def __init__(self):
+        pass
+
+    def bar(self):
+        return None
+
+    def bar2(self):
+        return "bar2"
+
+test $ git rmxp test.py/Foo/bar
+test $ cat test.py
+class Foo:
+    def __init__(self):
+        pass
+
+    def bar2(self):
+        return "bar2"
+
+test $ git di --cached
+diff --git a/test.py b/test.py
+index d3d67fb..4f6a66f 100644
+--- a/test.py
++++ b/test.py
+@@ -2,8 +2,6 @@ class Foo:
+     def __init__(self):
+         pass
+
+-    def bar(self):
+-        return None
+
+     def bar2(self):
+         return "bar2"
+test $ git rmxp test.py/Foo/bar2
+test $ cat test.py
+class Foo:
+    def __init__(self):
+        pass
+
+test $ git di --cached
+diff --git a/test.py b/test.py
+index d3d67fb..52105ff 100644
+--- a/test.py
++++ b/test.py
+@@ -2,9 +2,5 @@ class Foo:
+     def __init__(self):
+         pass
+
+-    def bar(self):
+-        return None
+
+-    def bar2(self):
+-        return "bar2"
+
 test $
 

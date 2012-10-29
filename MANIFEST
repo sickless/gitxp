@@ -1,3 +1,5 @@
 setup.py
 gitxp/__init__.py
 gitxp/addxp.py
+gitxp/gitxp.py
+gitxp/rmxp.py
