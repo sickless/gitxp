@@ -22,12 +22,12 @@ from distutils.core import setup
 
 setup(
     name="gitxp",
-    version="0.0.2",
+    version="0.0.3",
     author="Benoît Pineau",
     author_email="beny@sickless.net",
     description="Set of Git commands using the xpath representation to select content blocks",
     long_description=open('README.rst').read(),
     license="LICENSE.txt",
-    packages=['gitxp'],
+    packages=['libgitxp'],
     url='http://gitxp.sickless.net/',
 )
