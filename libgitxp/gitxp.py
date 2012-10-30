@@ -72,7 +72,7 @@ def get_blocksequence_of_xpath(content_list, xpath):
         if last_idx >= len(content_list):
             return (idx, content_list[idx:])
         # Ignore empty lines
-        if content_list[idx].strip() == '':
+        if content_list[last_idx].strip() == '':
             last_idx += 1
             continue
         # Indent is the same as the current block? That means to be the end!
@@ -110,11 +110,11 @@ def get_add_patch(filename, xpath):
     """
     staged_content = get_file_content_from_stage(filename)
     current_content = get_modified_file_content(filename)
-    staged_idx, staged_block_content = get_blocksequence_of_xpath(staged_content, xpath)
+    _, staged_block_content = get_blocksequence_of_xpath(staged_content, xpath)
     current_idx, current_block_content = get_blocksequence_of_xpath(current_content, xpath)
-    # The block already exists or not?
-    idx = staged_idx or current_idx
-    return get_patch(staged_block_content, current_block_content, idx, ADDING_MODE, filename)
+    # We only need to know the current_idx to set properly
+    # the patch even with changes done above in the file.
+    return get_patch(staged_block_content, current_block_content, current_idx, ADDING_MODE, filename)
 
 
 def get_rm_patch(filename, xpath):
