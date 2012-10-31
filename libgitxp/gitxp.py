@@ -124,13 +124,18 @@ def get_rm_patch(filename, xpath):
     """
     staged_content = get_file_content_from_stage(filename)
     idx, rm_block_content = get_blocksequence_of_xpath(staged_content, xpath)
-    # Get contexts before and after
+    # Get contexts before and after if possible
     beginning_context = staged_content[idx-1]
-    ending_content = staged_content[idx+len(rm_block_content)]
-    new_context = [beginning_context, ending_content]
+    new_context = [beginning_context]
+    ending_idx = idx+len(rm_block_content)
+    add_ending_context = ending_idx < len(staged_content)
+    if add_ending_context:
+        ending_content = staged_content[idx+len(rm_block_content)]
+        new_context.append(ending_content)
     # And insert it to make the patch applying properly
     rm_block_content.insert(0, beginning_context)
-    rm_block_content.append(ending_content)
+    if add_ending_context:
+        rm_block_content.append(ending_content)
     return get_patch(rm_block_content, new_context, idx, REMOVING_MODE, filename)
 
 
