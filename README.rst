@@ -82,7 +82,7 @@ git addxp
     test $
 
 
-git rmxp
+git delxp
 --------
 
 ::
@@ -98,7 +98,7 @@ git rmxp
         def bar2(self):
             return "bar2"
     
-    test $ git rmxp test.py/Foo/bar
+    test $ git delxp test.py/Foo/bar
     test $ cat test.py
     class Foo:
         def __init__(self):
@@ -121,7 +121,7 @@ git rmxp
     
          def bar2(self):
              return "bar2"
-    test $ git rmxp test.py/Foo/bar2
+    test $ git delxp test.py/Foo/bar2
     test $ cat test.py
     class Foo:
         def __init__(self):
@@ -144,3 +144,46 @@ git rmxp
     
     test $
 
+git resetxp & git checkoutxp
+----------------------------
+
+::
+
+    test $ git di --cached
+    diff --git a/test.py b/test.py
+    index d3d67fb..03d02b5 100644
+    --- a/test.py
+    +++ b/test.py
+    @@ -2,9 +2,6 @@ class Foo:
+         def __init__(self):
+             pass
+     
+    -    def bar(self):
+    -        return None
+    -
+         def bar2(self):
+             return "bar2"
+     
+    test $ git di
+    test $ git resetxp test.py/Foo/bar
+    test $ git di --cached
+    test $ git di
+    diff --git a/test.py b/test.py
+    index d3d67fb..03d02b5 100644
+    --- a/test.py
+    +++ b/test.py
+    @@ -2,9 +2,6 @@ class Foo:
+         def __init__(self):
+             pass
+     
+    -    def bar(self):
+    -        return None
+    -
+         def bar2(self):
+             return "bar2"
+     
+    test $ git checkoutxp  test.py/Foo/bar
+    test $ git di --cached
+    test $ git di 
+    test $ 
+    
