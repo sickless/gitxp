@@ -91,6 +91,7 @@ def get_blocksequence_of_xpath(content_list, xpath):
     last_idx = idx+1
     indent = indent_count(content_list[idx])
     while True:
+        # Until the end of the file
         if last_idx >= len(content_list):
             return (idx, content_list[idx:])
         # Ignore empty lines
@@ -146,15 +147,19 @@ def get_rm_patch(filename, xpath):
     staged_content = get_file_content_from_stage(filename)
     idx, rm_block_content = get_blocksequence_of_xpath(staged_content, xpath)
     # Get contexts before and after if possible
-    beginning_context = staged_content[idx-1]
-    new_context = [beginning_context]
+    new_context = []
+    add_beginning_context = idx
+    if add_beginning_context:
+        beginning_context = staged_content[idx-1]
+        new_context.append(beginning_context)
     ending_idx = idx+len(rm_block_content)
     add_ending_context = ending_idx < len(staged_content)
     if add_ending_context:
         ending_content = staged_content[idx+len(rm_block_content)]
         new_context.append(ending_content)
     # And insert it to make the patch applying properly
-    rm_block_content.insert(0, beginning_context)
+    if add_beginning_context:
+        rm_block_content.insert(0, beginning_context)
     if add_ending_context:
         rm_block_content.append(ending_content)
     return get_patch(rm_block_content, new_context, idx, REMOVING_MODE, filename)
@@ -168,15 +173,19 @@ def get_reset_patch(filename, xpath):
     HEAD_content = get_file_content_from_HEAD(filename)
     idx, HEAD_block_content = get_blocksequence_of_xpath(HEAD_content, xpath)
     # Get contexts before and after if possible
-    beginning_context = HEAD_content[idx-1]
-    new_context = [beginning_context]
+    new_context = []
+    add_beginning_context = idx
+    if add_beginning_context:
+        beginning_context = HEAD_content[idx-1]
+        new_context.append(beginning_context)
     ending_idx = idx+len(HEAD_block_content)
     add_ending_context = ending_idx < len(HEAD_content)
     if add_ending_context:
         ending_content = HEAD_content[idx+len(HEAD_block_content)]
         new_context.append(ending_content)
     # And insert it to make the patch applying properly
-    HEAD_block_content.insert(0, beginning_context)
+    if add_beginning_context:
+        HEAD_block_content.insert(0, beginning_context)
     if add_ending_context:
         HEAD_block_content.append(ending_content)
     return get_patch(new_context, HEAD_block_content, idx, ADDING_MODE, filename)
@@ -190,15 +199,18 @@ def get_checkout_patch(filename, xpath):
     staged_content = get_file_content_from_stage(filename)
     idx, block_content = get_blocksequence_of_xpath(staged_content, xpath)
     # Get contexts before and after
-    beginning_context = staged_content[idx-1]
-    new_context = [beginning_context]
+    new_context = []
+    if add_beginning_context:
+        beginning_context = staged_content[idx-1]
+        new_context.append(beginning_context)
     ending_idx = idx+len(staged_content)
     add_ending_context = ending_idx < len(staged_content)
     if add_ending_context:
         ending_content = staged_content[idx+len(block_content)]
         new_context.append(ending_content)
     # And insert it to make the patch applying properly
-    block_content.insert(0, beginning_context)
+    if add_beginning_context:
+        block_content.insert(0, beginning_context)
     if add_ending_context:
         block_content.append(ending_content)
     # TODO Refactoring is needed:
