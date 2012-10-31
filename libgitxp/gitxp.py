@@ -3,6 +3,7 @@
 
 import subprocess
 import difflib
+import os.path
 
 
 ADDING_MODE=1
@@ -12,11 +13,25 @@ FROM_STAGE=1
 FROM_HEAD=2
 
 def split_xpath(xpath):
-    """ Returns (filename, xpath_to_add)
+    """ Returns (filename, xpath_in_file)
 
     """
-    index = xpath.find('/')
-    return (xpath[:index], xpath[index:])
+    filename=""
+    parts = xpath.split('/')
+    for idx, part in enumerate(parts):
+        filename = os.path.join(filename, part)
+        if os.path.isdir(filename):
+            continue
+        elif os.path.isfile(filename):
+            break
+
+    if not os.path.isfile(filename):
+        raise AssertionError('%s is not a file' % filename)
+
+    # Rewrite the xpath defining the selected block
+    xpath_in_file = "/"+"/".join(parts[idx+1:])
+
+    return (filename, xpath_in_file)
 
 def get_file_content_from(filename, from_type):
     """ Returns list of strings
