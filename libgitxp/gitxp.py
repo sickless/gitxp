@@ -120,16 +120,16 @@ def get_blocksequence_of_xpath(content_list, xpath):
 
     return (idx, content_list[idx:last_idx])
 
-def get_patch(staged_content, new_content, index, mode, filename):
+def get_patch(old_content, new_content, index, mode, filename):
     """ Returns diff string
 
-        staged_content (str): the current content in the stage
+        old_content (str): the current content in the stage
         new_content (str): the new wanted content
-        index (int): index position of the staged_content
+        index (int): index position of the old_content
         mode (int): ADDING_MODE/REMOVING_MODE, used to set correctly the diff indexes
         filename (str): the filename to patch
     """
-    diff_block = list(difflib.unified_diff(staged_content, new_content, lineterm=''))
+    diff_block = list(difflib.unified_diff(old_content, new_content, lineterm=''))
     # Re-writing the indexes: 3rd line contains the index lines used to apply the patch
     if mode == ADDING_MODE:
         start, end = 1, 1
