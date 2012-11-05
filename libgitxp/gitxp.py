@@ -232,5 +232,11 @@ def apply_patch(patch, in_stage=True, revert=False):
     p = subprocess.Popen("""git apply %s %s - << PATCH 
 %s
 PATCH""" % (stage, revert, patch), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    p.wait()
+    if p.returncode:
+        print "return code:", p.returncode
+        print p.stderr.read()
+        print patch
+        return False
     return True
 
