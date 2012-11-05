@@ -222,16 +222,15 @@ def get_checkout_patch(filename, xpath):
     return get_patch(current_block_content, HEAD_block_content, current_idx, ADDING_MODE, filename)
 
 
-def apply_patch(patch, in_stage=True):
+def apply_patch(patch, in_stage=True, revert=False):
     """ Returns bool
 
         Returns True if nothing on stderr (which should mean the patch has been applied correctly)
     """
     stage = in_stage and " --cached" or ""
-    p = subprocess.Popen("""git apply %s - << PATCH 
+    revert = revert and " -R" or ""
+    p = subprocess.Popen("""git apply %s %s - << PATCH 
 %s
-PATCH""" % (stage, patch), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    if p.stderr.read():
-        return False
+PATCH""" % (stage, revert, patch), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     return True
 
