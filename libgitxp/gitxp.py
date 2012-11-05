@@ -128,8 +128,12 @@ def get_patch(old_content, new_content, index, mode, filename):
         index (int): index position of the old_content
         mode (int): ADDING_MODE/REMOVING_MODE, used to set correctly the diff indexes
         filename (str): the filename to patch
+
+        If no difference between both content, returns None
     """
     diff_block = list(difflib.unified_diff(old_content, new_content, lineterm=''))
+    if not diff_block:
+        return None
     # Re-writing the indexes: 3rd line contains the index lines used to apply the patch
     if mode == ADDING_MODE:
         start, end = 1, 1
