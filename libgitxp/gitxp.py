@@ -190,24 +190,22 @@ def get_reset_patch(filename, xpath):
         Returns the diff string from the xpath block of the filename
     """
     HEAD_content = get_file_content_from_HEAD(filename)
+    staged_content = get_file_content_from_stage(filename)
     idx, HEAD_block_content = get_blocksequence_of_xpath(HEAD_content, xpath)
+    idx, staged_block_content = get_blocksequence_of_xpath(staged_content, xpath)
     # Get contexts before and after if possible
-    new_context = []
     add_beginning_context = idx
     if add_beginning_context:
-        beginning_context = HEAD_content[idx-1]
-        new_context.append(beginning_context)
-    ending_idx = idx+len(HEAD_block_content)
-    add_ending_context = ending_idx < len(HEAD_content)
-    if add_ending_context:
-        ending_content = HEAD_content[idx+len(HEAD_block_content)]
-        new_context.append(ending_content)
-    # And insert it to make the patch applying properly
-    if add_beginning_context:
+        beginning_context = staged_content[idx-1]
+        staged_block_content.insert(0, beginning_context)
         HEAD_block_content.insert(0, beginning_context)
+    ending_idx = idx+len(staged_block_content)
+    add_ending_context = ending_idx < len(staged_content)
     if add_ending_context:
+        ending_content = staged_content[idx+len(staged_block_content)-1]
+        staged_block_content.append(ending_content)
         HEAD_block_content.append(ending_content)
-    return get_patch(new_context, HEAD_block_content, idx, ADDING_MODE, filename)
+    return get_patch(HEAD_block_content, staged_block_content, idx, ADDING_MODE, filename)
 
 
 def get_checkout_patch(filename, xpath):
