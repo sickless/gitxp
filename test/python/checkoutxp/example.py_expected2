@@ -1,0 +1,17 @@
+class Foo:
+    def __init__(self):
+        """nothing 
+
+           here
+        """
+        pass
+
+    def bar(self):
+        return None
+
+    def bar2(self):
+        return "bar2"
+
+    def bar3(self):
+        return "bar3"
+    

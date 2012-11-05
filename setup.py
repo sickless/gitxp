@@ -22,7 +22,7 @@ from distutils.core import setup
 
 setup(
     name="gitxp",
-    version="0.0.3",
+    version="0.0.4",
     author="Benoît Pineau",
     author_email="beny@sickless.net",
     description="Set of Git commands using the xpath representation to select content blocks",

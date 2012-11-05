@@ -1,0 +1,20 @@
+class Foo:
+    def __init__(self):
+        pass
+
+    def bar(self):
+        "bla bla"
+        return None
+
+    def bar2(self):
+        """bla bla
+            
+    
+
+        bla bla
+        """
+        return "bar2"
+
+    def bar3(self):
+        return "bar3"
+    
