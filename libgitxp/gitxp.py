@@ -213,28 +213,13 @@ def get_checkout_patch(filename, xpath):
 
         Returns the diff string which deletes the block content defined by the xpath
     """
-    staged_content = get_file_content_from_stage(filename)
-    idx, block_content = get_blocksequence_of_xpath(staged_content, xpath)
-    # Get contexts before and after
-    new_context = []
-    if add_beginning_context:
-        beginning_context = staged_content[idx-1]
-        new_context.append(beginning_context)
-    ending_idx = idx+len(staged_content)
-    add_ending_context = ending_idx < len(staged_content)
-    if add_ending_context:
-        ending_content = staged_content[idx+len(block_content)]
-        new_context.append(ending_content)
-    # And insert it to make the patch applying properly
-    if add_beginning_context:
-        block_content.insert(0, beginning_context)
-    if add_ending_context:
-        block_content.append(ending_content)
-    # TODO Refactoring is needed:
-    #      The code is the same as get_rm_patch()
-    #      excepted the 2 first arguments given to
-    #      get_patch() which are reversed!
-    return get_patch(new_context, block_content, idx, REMOVING_MODE, filename)
+    HEAD_content = get_file_content_from_HEAD(filename)
+    current_content = get_modified_file_content(filename)
+    _, HEAD_block_content = get_blocksequence_of_xpath(HEAD_content, xpath)
+    current_idx, current_block_content = get_blocksequence_of_xpath(current_content, xpath)
+    # We only need to know the current_idx to set properly
+    # the patch even with changes done above in the file.
+    return get_patch(current_block_content, HEAD_block_content, current_idx, ADDING_MODE, filename)
 
 
 def apply_patch(patch, in_stage=True):
