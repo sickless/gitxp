@@ -5,7 +5,7 @@ import sys
 import gitxp
 
 def checkout(filename, xpath):
-    patch = gitxp.get_reset_patch(filename, xpath)
+    patch = gitxp.get_checkout_patch(filename, xpath)
     gitxp.apply_patch(patch, in_stage=False)
 
 if __name__ == '__main__':
