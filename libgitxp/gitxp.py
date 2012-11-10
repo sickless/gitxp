@@ -4,6 +4,7 @@
 import subprocess
 import difflib
 import os.path
+import backend
 
 
 ADDING_MODE=1
@@ -68,57 +69,6 @@ def get_modified_file_content(filename):
     """
     return open(filename).read().splitlines()
 
-def indent_count(s):
-    """ Returns int
-
-        Counts the first space and tab characters contained
-        at the beginning of the given string.
-    """
-    cnt = 0
-    for c in s:
-        if c in ('\t', ' '):
-            cnt += 1
-            continue
-        break
-    return cnt
-
-def get_blocksequence_of_xpath(content_list, xpath):
-    """ Returns (int, list of strings)
-
-        Get the block sequence of the xpath from the content.
-
-        The returned tuple contains
-        * the index line of the beginning of the block sequence
-        * the block sequence itself
-    """
-    idx = 0
-    for path in xpath.split('/')[1:]:
-        while True:
-            if idx >= len(content_list):
-                # Xpath not in this revision
-                return (None, [])
-            if 'class %s' % path in content_list[idx]:
-                break
-            if 'def %s' % path in content_list[idx]:
-                break
-            idx += 1
-
-    last_idx = idx+1
-    indent = indent_count(content_list[idx])
-    while True:
-        # Until the end of the file
-        if last_idx >= len(content_list):
-            return (idx, content_list[idx:])
-        # Ignore empty lines
-        if content_list[last_idx].strip() == '':
-            last_idx += 1
-            continue
-        # Indent is the same as the current block? That means to be the end!
-        if indent_count(content_list[last_idx]) <= indent:
-            break
-        last_idx += 1
-
-    return (idx, content_list[idx:last_idx])
 
 def get_patch(old_content, new_content, index, mode, filename):
     """ Returns diff string
@@ -152,8 +102,9 @@ def get_add_patch(filename, xpath):
     """
     staged_content = get_file_content_from_stage(filename)
     current_content = get_modified_file_content(filename)
-    _, staged_block_content = get_blocksequence_of_xpath(staged_content, xpath)
-    current_idx, current_block_content = get_blocksequence_of_xpath(current_content, xpath)
+    backend_obj = backend.get_backend(filename)
+    _, staged_block_content = backend_obj.get_blocksequence_of_xpath(staged_content, xpath)
+    current_idx, current_block_content = backend_obj.get_blocksequence_of_xpath(current_content, xpath)
     # We only need to know the current_idx to set properly
     # the patch even with changes done above in the file.
     return get_patch(staged_block_content, current_block_content, current_idx, ADDING_MODE, filename)
@@ -164,7 +115,8 @@ def get_rm_patch(filename, xpath):
         Returns the diff string which deletes the block content defined by the xpath
     """
     staged_content = get_file_content_from_stage(filename)
-    idx, rm_block_content = get_blocksequence_of_xpath(staged_content, xpath)
+    backend_obj = backend.get_backend(filename)
+    idx, rm_block_content = backend_obj.get_blocksequence_of_xpath(staged_content, xpath)
     # Get contexts before and after if possible
     new_context = []
     add_beginning_context = idx
@@ -191,8 +143,9 @@ def get_reset_patch(filename, xpath):
     """
     HEAD_content = get_file_content_from_HEAD(filename)
     staged_content = get_file_content_from_stage(filename)
-    idx, HEAD_block_content = get_blocksequence_of_xpath(HEAD_content, xpath)
-    idx, staged_block_content = get_blocksequence_of_xpath(staged_content, xpath)
+    backend_obj = backend.get_backend(filename)
+    idx, HEAD_block_content = backend_obj.get_blocksequence_of_xpath(HEAD_content, xpath)
+    idx, staged_block_content = backend_obj.get_blocksequence_of_xpath(staged_content, xpath)
     # Get contexts before and after if possible
     add_beginning_context = idx
     if add_beginning_context:
@@ -215,8 +168,9 @@ def get_checkout_patch(filename, xpath):
     """
     HEAD_content = get_file_content_from_HEAD(filename)
     current_content = get_modified_file_content(filename)
-    _, HEAD_block_content = get_blocksequence_of_xpath(HEAD_content, xpath)
-    current_idx, current_block_content = get_blocksequence_of_xpath(current_content, xpath)
+    backend_obj = backend.get_backend(filename)
+    _, HEAD_block_content = backend_obj.get_blocksequence_of_xpath(HEAD_content, xpath)
+    current_idx, current_block_content = backend_obj.get_blocksequence_of_xpath(current_content, xpath)
     # We only need to know the current_idx to set properly
     # the patch even with changes done above in the file.
     return get_patch(current_block_content, HEAD_block_content, current_idx, ADDING_MODE, filename)

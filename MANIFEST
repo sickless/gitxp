@@ -5,4 +5,8 @@ libgitxp/checkoutxp.py
 libgitxp/delxp.py
 libgitxp/gitxp.py
 libgitxp/resetxp.py
+libgitxp/backend/__init__.py
+libgitxp/backend/backend.py
+libgitxp/backend/get_backend.py
+libgitxp/backend/pybackend.py
 test/test_gitxp.py

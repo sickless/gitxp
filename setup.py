@@ -28,6 +28,6 @@ setup(
     description="Set of Git commands using the xpath representation to select content blocks",
     long_description=open('README.rst').read(),
     license="LICENSE.txt",
-    packages=['libgitxp'],
+    packages=['libgitxp', 'libgitxp/backend'],
     url='http://gitxp.sickless.net/',
 )
