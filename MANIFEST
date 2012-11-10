@@ -1,5 +1,8 @@
 setup.py
 libgitxp/__init__.py
 libgitxp/addxp.py
+libgitxp/checkoutxp.py
 libgitxp/delxp.py
 libgitxp/gitxp.py
+libgitxp/resetxp.py
+test/test_gitxp.py
