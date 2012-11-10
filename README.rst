@@ -2,7 +2,7 @@
 gitxp
 =====
 
-gitxp is a set of git commands to show/add/delete content blocks of files by using the xpath representation
+gitxp *(xp for xpath)* is a set of git commands to show/add/delete content blocks of files by using the xpath representation
 
 Code is available on GitHub on the following address: `https://github.com/sickless/gitxp <https://github.com/sickless/gitxp>`_
 
@@ -83,7 +83,7 @@ git addxp
 
 
 git delxp
---------
+---------
 
 ::
 
