@@ -13,11 +13,20 @@ import sys
 
 from libgitxp import addxp, delxp, resetxp, checkoutxp
 
+def shortDescription(self):
+    return ("\npython %s %s.%s" % (sys.argv[0], self.__class__.__name__, self._testMethodName))
+
+if sys.version_info[:2] >= (2, 7):
+    from unittest.runner import TextTestResult
+    TextTestResult.getDescription = lambda _, self: shortDescription(self)
+
 class TestGitXP(unittest.TestCase):
 
     path_of_testfile = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
+
     def setUp(self):
+        super(TestGitXP, self).setUp()
         self.repodir = tempfile.mkdtemp()
         os.chdir(self.repodir)
         self.repo = git.Repo.init(self.repodir)
@@ -27,7 +36,7 @@ class TestGitXP(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(self.repodir)
-        pass
+        super(TestGitXP, self).tearDown()
 
     def _assert(self, done, expected):
         if done != expected:
@@ -119,4 +128,5 @@ class TestGitXP(unittest.TestCase):
         self._assert(self._get_file_from_workingtree('example.py'), self._get_testfile_content('python/checkoutxp/example.py_expected4'))
 
 if __name__ == '__main__':
+    unittest.TestCase.shortDescription = shortDescription
     unittest.main()
