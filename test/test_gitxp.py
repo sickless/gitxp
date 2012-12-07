@@ -9,6 +9,7 @@ import shutil
 import inspect
 import git
 import difflib
+import sys
 
 from libgitxp import addxp, delxp, resetxp, checkoutxp
 
@@ -42,6 +43,25 @@ class TestGitXP(unittest.TestCase):
         content = open(os.path.join(self.repodir, filename)).read()
         return content[:-1]
         
+
+    def test_difflib_unified_diff(self):
+        if sys.version_info[:2] <= (2, 6):
+            expected = ['--- before.py ', # NOTE: A space character is present after the filename
+                        '+++ after.py ',
+                        '@@ -1,0 +1,2 @@', # Got -1
+                        '+def foo():',
+                        '+    return None']
+            # Added a new function
+            assert expected == list(difflib.unified_diff([], ['def foo():', '    return None'], fromfile='before.py', tofile='after.py', lineterm=''))
+        else:
+            expected = ['--- before.py',
+                        '+++ after.py',
+                        '@@ -0,0 +1,2 @@', # Got -0
+                        '+def foo():',
+                        '+    return None']
+            # Added a new function
+            assert expected == list(difflib.unified_diff([], ['def foo():', '    return None'], fromfile='before.py', tofile='after.py', lineterm=''))
+
 
     def test_addxp(self):
         file_with_changes = os.path.join(self.path_of_testfile, 'python/addxp/example.py_add')

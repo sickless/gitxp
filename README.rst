@@ -6,6 +6,9 @@ gitxp *(xp for xpath)* is a set of git commands to show/add/delete content block
 
 Code is available on GitHub on the following address: `https://github.com/sickless/gitxp <https://github.com/sickless/gitxp>`_
 
+
+Code is currently tested on 2.6.8 and 2.7.3
+
 Examples
 ========
 
@@ -187,3 +190,12 @@ git resetxp & git checkoutxp
     test $ git di 
     test $ 
     
+
+
+Extra
+=====
+
+The project is hosted on: `http://gitxp.sickless.net <http://gitxp.sickless.net>`_
+
+The project is hosted by `http://www.sickless.net <http://www.sickless.net>`_
+

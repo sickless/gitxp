@@ -89,7 +89,11 @@ def get_patch(old_content, new_content, index, mode, filename):
         start, end = 1, 1
     elif mode == REMOVING_MODE:
         start, end = 1, 0
-    diff_block[2] = diff_block[2].replace('-1', '-%i'%(index+start)).replace('+1', '+%i'%(index+end))
+    indexes_to_change = [('-1', "-%i" % (index+start)),
+                         ('-0', "-%i" % (index+start)),
+                         ('+1', "+%i" % (index+end))]
+    for current_idx, new_idx in indexes_to_change:
+        diff_block[2] = diff_block[2].replace(current_idx, new_idx)
     # Adding the filename to the patch
     intro_patch = "diff --git a/%s b/%s\n" % (filename, filename)
     return intro_patch + "\n".join(diff_block)
