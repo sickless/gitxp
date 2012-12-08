@@ -105,6 +105,12 @@ class TestGitXP(unittest.TestCase):
         self._assert(self.repo.git.show(':example.py'), self._get_testfile_content('python/resetxp/example.py_expected1'))
         resetxp.reset('example.py', '/Foo/bar3')
         self._assert(self.repo.git.show(':example.py'), self._get_testfile_content('python/resetxp/example.py_expected2'))
+
+    def test_resetxp_after_delxp(self):
+        delxp.delete('example.py', '/Foo/bar')
+        self._assert(self.repo.git.show(':example.py'), self._get_testfile_content('python/delxp/example.py_expected1'))
+        resetxp.reset('example.py', '/Foo/bar')
+        self._assert(self.repo.git.show(':example.py'), self._get_testfile_content('python/example.py'))
         
     def test_checkoutxp(self):
         # Do some changes

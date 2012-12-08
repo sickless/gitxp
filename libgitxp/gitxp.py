@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys
 import subprocess
 import difflib
 import os.path
@@ -89,9 +90,13 @@ def get_patch(old_content, new_content, index, mode, filename):
         start, end = 1, 1
     elif mode == REMOVING_MODE:
         start, end = 1, 0
-    indexes_to_change = [('-1', "-%i" % (index+start)),
-                         ('-0', "-%i" % (index+start)),
-                         ('+1', "+%i" % (index+end))]
+    if sys.version_info[:2] <= (2, 6):
+        indexes_to_change = [('-1', "-%i" % (index+start)),
+                             ('+1', "+%i" % (index+end))]
+    else:
+        indexes_to_change = [('-1', "-%i" % (index+start)),
+                             ('-0', "-%i" % (index+start)),
+                             ('+1', "+%i" % (index+end))]
     for current_idx, new_idx in indexes_to_change:
         diff_block[2] = diff_block[2].replace(current_idx, new_idx)
     # Adding the filename to the patch
@@ -148,8 +153,9 @@ def get_reset_patch(filename, xpath):
     HEAD_content = get_file_content_from_HEAD(filename)
     staged_content = get_file_content_from_stage(filename)
     backend_obj = backend.get_backend(filename)
-    idx, HEAD_block_content = backend_obj.get_blocksequence_of_xpath(HEAD_content, xpath)
-    idx, staged_block_content = backend_obj.get_blocksequence_of_xpath(staged_content, xpath)
+    idx_HEAD, HEAD_block_content = backend_obj.get_blocksequence_of_xpath(HEAD_content, xpath)
+    idx_staged, staged_block_content = backend_obj.get_blocksequence_of_xpath(staged_content, xpath)
+    idx = idx_HEAD or idx_staged
     # Get contexts before and after if possible
     add_beginning_context = idx
     if add_beginning_context:
