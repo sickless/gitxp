@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import backend
+import re
 
 class PyBackend(backend.Backend):
     """This is the backend class to deal with python files."""
@@ -22,9 +23,8 @@ class PyBackend(backend.Backend):
                 if idx >= len(file_content_list):
                     # Xpath not in this revision
                     return (None, [])
-                if 'class %s' % path in file_content_list[idx]:
-                    break
-                if 'def %s' % path in file_content_list[idx]:
+                pattern = re.compile(".*(class|def).*%s[\ (:].*" % path)
+                if pattern.match(file_content_list[idx]):
                     break
                 idx += 1
 
